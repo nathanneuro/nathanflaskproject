@@ -2,6 +2,8 @@
 
 The [Work in Progress](https://nathanflask.herokuapp.com) on Nathan's heroku that demonstrates some basic functionality.
 
+The [blog post](http://blog.thedataincubator.com/2015/09/painlessly-deploying-data-apps-with-bokeh-flask-and-heroku/) that started this.
+
 # [Flask on Heroku](https://github.com/thedataincubator/flask-demo.git)
 
 Forked from [https://github.com/thedataincubator/flask-demo.git](https://github.com/thedataincubator/flask-demo.git)
