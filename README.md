@@ -1,8 +1,10 @@
-# Nathan's preliminary exploration of 
-# the Data Incubator's Flask on Heroku Project
+# Nathan's preliminary exploration of the Data Incubator's Flask on Heroku Project
 
+The [Work in Progress](https://nathanflask.herokuapp.com) on Nathan's heroku that demonstrates some basic functionality.
 
-# Flask on Heroku
+# [Flask on Heroku](https://github.com/thedataincubator/flask-demo.git)
+
+Forked from [https://github.com/thedataincubator/flask-demo.git](https://github.com/thedataincubator/flask-demo.git)
 
 This project is intended to help you tie together some important concepts and
 technologies from the 12-day course, including Git, Flask, JSON, Pandas,
@@ -11,7 +13,6 @@ Requests, Heroku, and Bokeh for visualization.
 The repository contains a basic template for a Flask configuration that will
 work on Heroku.
 
-A [finished example](https://lemurian.herokuapp.com) that demonstrates some basic functionality.
 
 ## Step 1: Setup and deploy
 - Git clone the existing template repository.
