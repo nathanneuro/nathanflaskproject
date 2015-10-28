@@ -53,8 +53,8 @@ def stockgraph():
                           title='Data from Quandle WIKI set',
                           x_axis_label='date',
                           x_axis_type='datetime')
-        plot.line(df.Date, df.Open, color='green', legend='Open')
-        plot.line(df.Date, df.Close, color='red', legend='Close')
+        plot.line(df.Date, df.Open, color='green', legend='Open', alpha=0.7)
+        plot.line(df.Date, df.Close, color='red', legend='Close', alpha=0.7)
 
         plot.yaxis.axis_label = 'Price'
         script, div = components(plot)
@@ -62,4 +62,4 @@ def stockgraph():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 33507))
-    app.run(host='0.0.0.0',port=port, debug=True)
+    app.run(host='0.0.0.0',port=port, debug=False)
