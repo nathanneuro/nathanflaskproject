@@ -1,3 +1,7 @@
+# Nathan's preliminary exploration of 
+# the Data Incubator's Flask on Heroku Project
+
+
 # Flask on Heroku
 
 This project is intended to help you tie together some important concepts and
