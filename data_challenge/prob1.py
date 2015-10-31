@@ -12,6 +12,7 @@ import numpy as np
 import itertools
 np.set_printoptions(precision=9)
 import math
+
 n = 10  # Steps
 p1 = 0.5 # Probability of vertical or horizontal
 p2 = 0.5 # Probability of success (towards target)
@@ -77,13 +78,14 @@ def walk_pmf_add(n, p1, p2, goal):
 
 def walk_sim_peak(trials, n, goal):
     cross = 0
-    for t in range(trials + 1):
+    move_tot = 0
+    for t in range(trials):
         x = 0
         y = 0
-        print("Trial #", t)
-        for i in range(n + 1):
+        # print("Trial #", t+1)
+        for i in range(n):
             move = np.random.randint(0,4)
-            print("Move rand int: ", move, " for step number ", i)
+            # print("Move rand int: ", move, " for step number ", i+1)
             if move == 0:
                 x = x - 1
             elif move == 1:
@@ -94,15 +96,26 @@ def walk_sim_peak(trials, n, goal):
                 y = y + 1
             else:
                 print("Error. Wrong Move direction.")
+            # print("(", x, ", ", y, ")")
             if ((x**2 + y**2)**0.5) >= goal:
                 cross = cross + 1
-                print("Cross! ", cross)
+                # print("Cross! ", cross)
+                move_tot = move_tot + (i+1)
                 break
-    print("Crosses: ", cross, " Total trials: ", trials, " p = ", cross/trials)
-    return (cross, trials, cross/trials)
+    print("Crosses: ", cross, " Total trials: ", trials, " p = ", cross/trials, "Move avg:", move_tot/trials)
+    return (cross, trials, cross/trials, move_tot)
+
+run_tot = [0, 0, 0, 0]
+
+for job in range(100):
+    w = walk_sim_peak((10**5)*2, 3000000, 60)
+    run_tot[0] = run_tot[0] + w[0]
+    run_tot[1] = run_tot[1] + w[1]
+    run_tot[2] = run_tot[0] / run_tot[1]
+    run_tot[3] = run_tot[3] + w[3]
+print("Crosses: ", run_tot[0], "Trials: ", run_tot[1], " p = ", run_tot[2], "Move Avg:", (run_tot[3]/run_tot[1]) )
 
 
-walk_sim_peak(3, 10, 3)
 
 
 #def walkendpoint(n, p1, q, p2):

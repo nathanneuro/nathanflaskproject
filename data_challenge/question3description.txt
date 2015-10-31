@@ -1,0 +1,17 @@
+HireQuest
+Where to outsource next?
+Based on data digital literacy (+ points)
+Digital Math Ability (+ points)
+Non-Digital Math Education score of region (more education = + points)
+Non-Digital Literacy score?
+
+Median wage of region (higher cost = - points, lower cost = + points)
+	Median will be less thrown off by upper and lower tails
+
+Prediction of economic development based on patterns of other countries
+(does this place match the economic outputs of countries that went tech just before they went tech?
+(pattern match = + points)
+
+Display heatmap of world for where to next outsource tech jobs, and list of top 10 locations with respective scores.
+
+
