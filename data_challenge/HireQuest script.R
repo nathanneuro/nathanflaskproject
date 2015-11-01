@@ -1,4 +1,4 @@
-# Aggregate Data and analysis for HireQuest
+# Aggregate Data and analysis for Code Worker Quest
 # Data Incubator Challenge
 # Problem 3
 library(data.table)
@@ -45,16 +45,17 @@ setnames(join2, "V2", "gallup.median.income")
 
 #write.csv(join2, "join2.csv", row.names=FALSE, na="")
 
+pisa.summary <- as.data.frame(pisa.summary)
 pisa.summary$Country.Name <- gsub('Korea', 'South Korea', pisa.summary$Country.Name)
 pisa.summary$Country.Name <- gsub('Slovak Republic', 'Slovakia', pisa.summary$Country.Name)
-pisa.summary$Country.Name <- gsub('Cyprus1,2', 'Cyprus', pisa.summary$Country.Name)
+pisa.summary$Country.Name <- gsub('Cyprus1, 2', 'Cyprus', pisa.summary$Country.Name)
 pisa.summary$Country.Name <- gsub('Viet Nam', 'Vietnam', pisa.summary$Country.Name)
 
 pisa.summary <- as.data.table(pisa.summary)
 setkey(pisa.summary, "Country.Name")
 join3 <- merge(join2, pisa.summary, by="Country.Name", all = T)
 
-citigroup.scores <- as.data.table(citigroup.scores)
+cypcitigroup.scores <- as.data.table(citigroup.scores)
 largest.150.cities <- as.data.table(largest.150.cities)
 cities <- merge(citigroup.scores, largest.150.cities, all.x = T, by="City.name")
 top50citiespop <- as.data.table(top50citiespop)
@@ -68,6 +69,26 @@ cities <- merge(cities, list268cities, all.x = T, by=c("City.name", "Country.nam
 setnames(cities, "Country.name.x", "Country.name")
 
 # write.csv(cities, "joinedcities.csv", row.names=FALSE, na="")
+# write.csv(join3, "join3.csv", row.names=FALSE, na="")
+
+setnames(joinedcities, "Country.name", "Country.Name")
+
+joinedcities$Country.Name <- gsub("Egypt", "Egypt, Arab Rep.", joinedcities$Country.Name)
+joinedcities$Country.Name[52] <- "Hong Kong-China"
+joinedcities$Country.Name[104] <- "Shanghai-China"
+total <- merge(join3, joinedcities, by = "Country.Name", all = T)
+total[200, 2:5] <- total[42, 2:5]
+total[101, 3:5] <- total[42, 3:5]
+total[67,]
+total <- total[-67,]
+total[26,]
+total <- total[-26,]
+
+
+
+
+
+#write.csv(total, "Code_Worker_Quest.csv", row.names=FALSE, na="")
 
 # FULL OUTER JOIN
 # Result <- merge(Employees,Departments, all=TRUE)

@@ -27,6 +27,67 @@ def main():
 def index():
     return render_template('index.html')
 
+@app.route('/proposal')
+def proposal():
+    return render_template('proposal.html')
+
+@app.route('/graph1')
+def graph1():
+    args = request.args
+    weights = getitem(args, 'weights', '1,1,1,1,1,1,1,1,1')
+    #9 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
+
+    session = requests.Session()
+    session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
+    # raw_data = session.get(api_url)
+    raw = requests.get(api_url)
+    if(raw.json().get('error') is True):  # changed from == unicode
+        # any returned error message means there's uh, an error
+        return render_template('grapherror.html')
+    else:
+        # Raw data to Pandas dataframe
+        df = pd.DataFrame(raw.json().get('data'), columns=raw.json().get('column_names'))
+        df['Date'] = pd.to_datetime(df['Date'])
+        # Making the plot
+        TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+        plot = plt.figure(tools=TOOLS,
+                          title='Data from Quandle WIKI set',
+                          x_axis_label='date',
+                          x_axis_type='datetime')
+        plot.line(df.Date, df.Open, color='green', legend='Open', alpha=0.7)
+        plot.line(df.Date, df.Close, color='red', legend='Close', alpha=0.7)
+
+        plot.yaxis.axis_label = 'Price'
+        script, div = components(plot)
+        return render_template('graph1.html', script=script, div=div, stock=ticker.upper())
+
+@app.route('/graph2')
+def graph2():
+    args = request.args
+    weights = getitem(args, 'weights', '1,1,1,1,1,1,1,1,1,1')
+    #10 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers, citi_score]
+
+    if(raw.json().get('error') is True):  # changed from == unicode
+        # any returned error message means there's uh, an error
+        return render_template('grapherror.html')
+    else:
+        # Raw data to Pandas dataframe
+        df = pd.DataFrame(raw.json().get('data'), columns=raw.json().get('column_names'))
+        df['Date'] = pd.to_datetime(df['Date'])
+        # Making the plot
+        TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+        plot = plt.figure(tools=TOOLS,
+                          title='Data from Quandle WIKI set',
+                          x_axis_label='date',
+                          x_axis_type='datetime')
+        plot.line(df.Date, df.Open, color='green', legend='Open', alpha=0.7)
+        plot.line(df.Date, df.Close, color='red', legend='Close', alpha=0.7)
+
+        plot.yaxis.axis_label = 'Price'
+        script, div = components(plot)
+        return render_template('graph2.html', script=script, div=div, stock=ticker.upper())
+
+
 
 
 

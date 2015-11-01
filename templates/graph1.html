@@ -1,4 +1,11 @@
-<div><h1> Global Heatmap for Tech Hire Sources </h1></div>
+{% extends "layout.html" %}
+{% block body %}
+<div id="bg">
+  <img src="images/bg.jpg" alt="">
+</div>
+<div><h1> Global Heatmap for Tech Hire Sources </h1>
+    <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
+</div>
 <div>
 <p> Formula: Digital Literacy * weight_dl + Digital Math Ability * weight_dm + Math Education * weight_math + Industrial Development Forecast * weight_idf  - Median Wage * weight_wage </p>
 </div>
@@ -6,3 +13,4 @@
     <p> Graph
     </p>
 </div>
+{% endblock %}
