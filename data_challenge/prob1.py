@@ -97,18 +97,17 @@ def walk_sim_peak(trials, n, goal):
             else:
                 print("Error. Wrong Move direction.")
             # print("(", x, ", ", y, ")")
-            if ((x**2 + y**2)**0.5) >= goal:
-                cross = cross + 1
-                # print("Cross! ", cross)
-                move_tot = move_tot + (i+1)
-                break
+        if ((x**2 + y**2)**0.5) >= goal:
+            cross = cross + 1
+            # print("Cross! ", cross)
+            move_tot = move_tot + (i+1)
     print("Crosses: ", cross, " Total trials: ", trials, " p = ", cross/trials, "Move avg:", move_tot/trials)
     return (cross, trials, cross/trials, move_tot)
 
 run_tot = [0, 0, 0, 0]
 
-for job in range(100):
-    w = walk_sim_peak((10**5)*2, 3000000, 60)
+for job in range(15):
+    w = walk_sim_peak((10**5)*50, 10, 3)
     run_tot[0] = run_tot[0] + w[0]
     run_tot[1] = run_tot[1] + w[1]
     run_tot[2] = run_tot[0] / run_tot[1]
