@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1> Code Worker Quest Data </h1>
+<h3> Credit for table styling to <a href="https://sarahleejane.github.io/learning/python/2015/08/09/simple-tables-in-webapps-using-flask-and-pandas-with-python.html">SarahLee Jane</a>.</h3>
+{% for table in tables %}
+    <h2>{{titles[loop.index]}}</h2>
+    {{ table|safe }}
+  {% endfor %}
+{% endblock %}

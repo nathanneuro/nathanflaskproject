@@ -31,6 +31,15 @@ def index():
 def proposal():
     return render_template('proposal.html')
 
+@app.route('/table')
+def show_table():
+    data = pd.read_csv('Code_Worker_Quest.csv')
+    #[income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
+    countries = data.set_index(['Country.Name'])
+    cities = data.set_index(['City.name'])
+    return render_template('table.html', tables=[countries.to_html(classes='country'), cities.to_html(classes='city')], titles= ['By Country', 'By City'])
+
+
 @app.route('/graph1')
 def graph1():
     args = request.args
