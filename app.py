@@ -66,6 +66,8 @@ def graph1():
     #[income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
     #countries = data.loc[data.Country.Name == Tr
     df.set_index(['Country.Name'], inplace = True)
+    top_countries = df.iloc[:10,]
+    top_countries = top_countries.iloc[:,list(1,24)]
     # Making the plot
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
     plot = plt.figure(tools=TOOLS,
@@ -77,7 +79,7 @@ def graph1():
     plot.yaxis.axis_label = '% Variation from Mean'
     script, div = components(plot)
     
-    return render_template('graph1.html', script=script, div=div, weights=weights)
+    return render_template('graph1.html', script=script, div=div, weights=weights, tables=top_countries.to_html(classes='country'))
 
 @app.route('/graph2')
 def graph2():
@@ -96,14 +98,12 @@ def graph2():
     df = df.set_index(['City.name'])
     df = df[df.index != 0]
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-    df.to_csv("withw.csv")
     # Create new dataframe of five top cities
     top_cities = pd.DataFrame(df.iloc[:5,-10:])
     #top_cities_disp['City.name'] = df.loc['City.name']
     #top_cities_disp['weight_score'] = df.loc['weight_score']
     #top_cities_disp = top_cities_disp[:5,]
     top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-    top_cities.to_csv("justtop.csv")
     #top_cities_disp = top_cities_disp.sort_values('weight_score', axis=0, ascending=False, na_position='last')
 
     # Making the plot
