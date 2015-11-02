@@ -152,8 +152,8 @@ def graph2():
 def stockgraph():
     args = request.args
     ticker = getitem(args, 'ticker', 'GOOG')
-    api_key = 'J57eFVXL_QaU2GkUyLkj'
-    api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/{}.json?api_key={}'. format(ticker, api_key)
+    api_key = ''
+    api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/{}.json?'. format(ticker)
     session = requests.Session()
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
     # raw_data = session.get(api_url)
