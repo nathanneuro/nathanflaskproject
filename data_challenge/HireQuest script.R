@@ -88,7 +88,7 @@ total <- total[-26,]
 
 
 
-#write.csv(total, "Code_Worker_Quest.csv", row.names=FALSE, na="")
+write.csv(total, "Code_Worker_Quest.csv", row.names=FALSE, na="")
 
 # FULL OUTER JOIN
 # Result <- merge(Employees,Departments, all=TRUE)

@@ -1,0 +1,67 @@
+#!/usr/bin/python2
+import json,pandas
+from collections import OrderedDict
+from bokeh.plotting import figure, show, output_file, ColumnDataSource
+from bokeh.models import HoverTool
+import math
+user_by_country_count = pandas.read_csv('data.csv')
+
+with open('countries.json','r') as f:
+    geodata = json.load(f)
+
+geodata_features = geodata['features']
+country_xs = []
+country_ys = []
+country_names = []
+country_num_users = []
+country_colors = []
+colors = ['#CCE5FF','#CCCCFF','#9999FF','#6666FF','#3333FF',
+         '#0000FF','#0000CC','#000099','#000066','#0000CC']
+
+for aCountry in geodata_features:
+    cName = aCountry['properties']['name']
+    country_names.append(cName)
+
+    geometry_type = aCountry['geometry']['type']
+    if geometry_type == "MultiPolygon":
+        for poly_coords in aCountry['geometry']['coordinates']:
+            coords = poly_coords[0]
+
+            country_xs.append(map(lambda x:x[0],coords))
+            country_ys.append(map(lambda x:x[1],coords))
+    else:
+        coords = aCountry['geometry']['coordinates'][0]
+        country_xs.append(map(lambda x:x[0],coords))
+        country_ys.append(map(lambda x:x[1],coords))
+
+    if cName in user_by_country_count['Country'].values:
+        num_users = user_by_country_count['Count'][user_by_country_count[user_by_country_count.Country==cName].index[0]]
+        country_num_users.append(num_users)
+        country_colors.append(colors[int(math.log(num_users))])
+    else:
+        country_num_users.append(0)
+        country_colors.append("#00FF80")
+
+source = ColumnDataSource(
+    data = dict(
+        x=country_xs,
+        y=country_ys,
+        color=country_colors,
+        name=country_names,
+        users=country_num_users,
+    )
+)
+output_file("global.html", title="global.py example")
+TOOLS="pan,wheel_zoom,box_zoom,reset,hover,save"
+p = figure(title="Upwork Users Location", tools=TOOLS)
+p.patches('x', 'y',
+    fill_color='color', fill_alpha=0.7,
+    line_color="white", line_width=0.5,
+    source=source)
+hover = p.select(dict(type=HoverTool))
+hover.point_policy = "follow_mouse"
+hover.tooltips = OrderedDict([
+    ("Name", "@name"),
+    ("Number of Users", "@users"),
+])
+show(p)

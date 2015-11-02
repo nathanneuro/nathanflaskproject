@@ -1,10 +1,28 @@
 {% extends "layout.html" %}
 {% block body %}
 <div id="bg">
-  <img src="http://b-i.forbesimg.com/kenrapoza/files/2013/04/Shanghai-sunrise.jpg" alt="">
+    <img src="http://b-i.forbesimg.com/kenrapoza/files/2013/04/Shanghai-sunrise.jpg" alt="">
 </div>
-<div>
+<div id="page-wrap">
 <h1> Top Five Cities for Tech Hire Sourcing </h1>
 <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
+<div>
+    <form name="Weights" method=get>
+        Formula Weights:
+        <input type="text" name="weights" value="{{ weights }}">
+        <button type="submit">Update</button>
+
+    <p>
+    Graph
+    {{ script | safe }}
+    {{ div | safe }}
+    {{ graph | safe }}
+    </p>
+</div>
+<div>
+    <p>
+        {{ tables | safe }}
+    </p>
+</div>
 </div>
 {% endblock %}

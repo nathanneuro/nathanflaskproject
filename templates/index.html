@@ -1,8 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
-<div id="bg">
-  <img src="https://i.ytimg.com/vi/keKfBIr6TjM/maxresdefault.jpg" alt="">
-</div>
+
+<div id="page-wrap">
 <div>
   <h1>Hello and welcome to Nathan's Data Incubator Page </h1>
 </div>
@@ -13,4 +12,9 @@
     <button><a href="{{ url_for('proposal') }}">Data Incubator Challenge Proposal</a></button> My Proposal for Question 3 of the DI Challenge.
 
 </p></div>
+</div>
+
+<div id="bg">
+  <img src="https://i.ytimg.com/vi/keKfBIr6TjM/maxresdefault.jpg" alt="">
+</div>
 {% endblock %}
