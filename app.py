@@ -96,12 +96,14 @@ def graph2():
     df = df.set_index(['City.name'])
     df = df[df.index != 0]
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    df.to_csv("withw.csv")
     # Create new dataframe of five top cities
     top_cities = pd.DataFrame(df.iloc[:5,-10:])
     #top_cities_disp['City.name'] = df.loc['City.name']
     #top_cities_disp['weight_score'] = df.loc['weight_score']
     #top_cities_disp = top_cities_disp[:5,]
     top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    top_cities.to_csv("justtop.csv")
     #top_cities_disp = top_cities_disp.sort_values('weight_score', axis=0, ascending=False, na_position='last')
 
     # Making the plot
