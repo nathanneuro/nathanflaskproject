@@ -7,11 +7,22 @@
     <h1> Global Heatmap for Tech Hire Sources </h1>
     <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
     <div>
-        <p>
-        <form name="Formula" method=get>
-        Formula Weights:
-        <input type="text" name="weights" value="{{ weights | safe }}">
-        <button type="submit">Update</button>
+    <p>
+    <table>
+    {% for field in form %}
+        <td>\( {{ field.name }} \)</td>
+        <td>{{ field(size=12) }}</td>
+        <td>{{ field.label }}</td>
+        {% if field.errors %}
+      <td><ul class=errors>
+            {% for error in field.errors %}
+            <li><font color="red">{{ error }}</font></li>
+            {% endfor %}</ul></td>
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+    <button type="submit">Update</button>
           <ul>Formula:
             <li>- Median Wage * (negative) weight_wage</li>
             <li>Digital Literacy * weight_dl + </li>

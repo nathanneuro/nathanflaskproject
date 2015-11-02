@@ -9,8 +9,15 @@ import os
 import pandas as pd
 import numpy as np
 from collections import OrderedDict
+from flask_wtf import Form
+from wtforms import FloatField, validators #, StringField
+import flaskconfig as config
 
+#set FLASKDEMO_SETTINGS = '/../../flaskkey.cfg'
 app = Flask(__name__)
+app.secret_key = config.SECRET_KEY
+#app.config.from_object('flaskdemo.default_settings')
+#app.config.from_envvar('FLASKDEMO_SETTINGS')
 # recommended  Flask(__name__.split('.')[0])
 
 
@@ -21,6 +28,29 @@ def getitem(obj, item, default):
         return default
     else:
         return obj[item]
+
+class NineForm(Form):
+    neg = FloatField(label='weight', default=-1)
+    half1 = FloatField(label='weight', default=0.5)
+    half2 = FloatField(label='weight', default=0.5)
+    half3 = FloatField(label='weight', default=0.5)
+    pos1 = FloatField(label='weight', default=1)
+    qua2 = FloatField(label='weight', default=0.25)
+    qua3 = FloatField(label='weight', default=0.25)
+    qua4 = FloatField(label='weight', default=0.25)
+    qua5 = FloatField(label='weight', default=0.25)        
+
+class TenForm(Form):
+    neg = FloatField(label='Median Wage', default=-1)
+    half1 = FloatField(label='Digital Literacy', default=0.5)
+    half2 = FloatField(label='weight', default=0.5)
+    half3 = FloatField(label='weight', default=0.5)
+    pos1 = FloatField(label='weight', default=1)
+    qua2 = FloatField(label='weight', default=0.25)
+    qua3 = FloatField(label='weight', default=0.25)
+    qua4 = FloatField(label='weight', default=0.25)
+    qua5 = FloatField(label='weight', default=0.25)
+    pos2 = FloatField(label='weight', default=1)
 
 
 @app.route('/')
@@ -53,10 +83,16 @@ def show_table():
     return render_template('showtable.html', tables=[countries.to_html(classes='country'), cities.to_html(classes='city')], titles= ['By Country', 'By City'])
 
 
-@app.route('/graph1')
+@app.route('/graph1', methods=('GET', 'POST'))
 def graph1():
+    #form = MyForm()
     args = request.args
-    weights = getitem(args, 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
+    weights = getitem(request.args.getlist(), 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
+    if isinstance(weights, str) == True:
+        print("oh no, a string")
+        weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
+    #if form.validate_on_submit():
+    #    return redirect('/graph1')
     #9 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
     #session = requests.Session()
     #session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
@@ -69,8 +105,10 @@ def graph1():
     df['country_weight'] = (df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8])/9
     # df = df[df.index != 0]
     df = df.sort_values('country_weight', axis=0, ascending=False, na_position='last')
-    top_countries = pd.DataFrame(df.iloc[:10,[1,23]])
-    #tchtml = top_countries.to_html(classes='country')
+    top_countries = pd.DataFrame(df.groupby(df.index).first())
+    top_countries = top_countries.sort_values('country_weight', axis=0, ascending=False, na_position='last')
+    top_countries = top_countries.iloc[:10, [23]]
+    tchtml = top_countries.to_html(classes='country')
     # Making the plot
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
     #plot = plt.figure(tools=TOOLS,
@@ -81,13 +119,22 @@ def graph1():
     # bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
     #plot.yaxis.axis_label = '% Variation from Mean'
     
-    script, div = components(plot)
-    return render_template('graph1.html', script=script, div=div, weights=weights)
+    #script, div = components(plot)
+    script = 1
+    div = 1
+    return render_template('graph1.html', script=script, div=div, weights=weights, tables=tchtml)
 
-@app.route('/graph2')
+@app.route('/graph2', methods=('GET', 'POST'))
 def graph2():
+    form = TenForm()
+    if form.validate_on_submit():
+        return redirect('/graph2')
     weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,1])
-    #10 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers, citi_score]
+    print(weights)
+    if isinstance(weights, str) == True:
+        print("oh no, a string")
+        
+        #10 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers, citi_score]
     
     #if(raw.json().get('error') is True):  # changed from == unicode
         # any returned error message means there's uh, an error
