@@ -60,14 +60,19 @@ def graph1():
     #9 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
     session = requests.Session()
     session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-    
+    df['weight_score'] = df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8] + df['citi_score']*weights[9]
+    df = df.set_index(['City.name'])
+    df = df[df.index != 0]
+    df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+
     # Raw data to Pandas dataframe
     df = pd.read_csv('static/Code_Worker_Quest.csv')
     #[income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
     #countries = data.loc[data.Country.Name == Tr
     df.set_index(['Country.Name'], inplace = True)
+
     top_countries = df.iloc[:10,]
-    top_countries = top_countries.iloc[:,list(1,24)]
+    # top_countries = top_countries.iloc[:,list(1,24)]
     # Making the plot
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
     plot = plt.figure(tools=TOOLS,
@@ -99,7 +104,6 @@ def graph2():
     df = df[df.index != 0]
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     # Create new dataframe of five top cities
-    top_cities = pd.DataFrame(df.iloc[:5,-10:])
     #top_cities_disp['City.name'] = df.loc['City.name']
     #top_cities_disp['weight_score'] = df.loc['weight_score']
     #top_cities_disp = top_cities_disp[:5,]
@@ -123,24 +127,10 @@ def graph2():
             palette=colors,
             **_chart_styling)
     
-    #a = create_area_chart(top_cities.values, colors)
-    cols = top_cities.columns.values.tolist()
-    ind = top_cities.index.tolist()
-    print(ind)
-    #d = {}
-    #d = top_cities.to_dict(orient='index')
-    print(cols)
-    ar = top_cities.values
-    print(top_cities.values)
-    #p.grid.minor_grid_line_color = '#eeeeee'
-    #print(d)
-    #print(d[0])
-    #p.scatter(top_cities.values, top_cities.values)
-    p = figure(plot_width=900, plot_height=600)
-    p.line(cols, ar[0], line_width=2)
-    p.xaxis.axis_label = 'Time'
-    p.yaxis.axis_label = 'Value'
-    #bar = Bar(cols, ind[0][0])
+    
+    top_cities = pd.DataFrame(df.iloc[:5,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
+    top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    bar = Bar(top_cities, 'Country.Name', values = 'weight_score',)
     script, div = components(p)
     return render_template('graph2.html', script=script, div=div, weights=weights, tables=top_cities.to_html(classes='city'))
 
