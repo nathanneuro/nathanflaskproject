@@ -9,8 +9,6 @@ import os
 import pandas as pd
 import numpy as np
 from collections import OrderedDict
-import plotly.plotly as py
-from plotly.graph_objs import Area
 
 app = Flask(__name__)
 # recommended  Flask(__name__.split('.')[0])
