@@ -6,17 +6,32 @@
 <div id="page-wrap">
     <h1> Global Heatmap for Tech Hire Sources </h1>
     <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
-<div>
-<p> Formula: Digital Literacy * weight_dl + Digital Math Ability * weight_dm + Math Education * weight_math + Industrial Development Forecast * weight_idf  - Median Wage * weight_wage </p>
-</div>
-<div>
-    <p> Graph
-    <iframe width="800" height="550" src="http://www.openheatmap.com/embed.html?map=PyrocatechuicCircumvolutoryProthoraxs" ></iframe>
-    <!--{{ script | safe }} -->
-    <!-- {{ div | safe }} -->
-    </p>
-    {{ tables | safe }}
-</div>
-</div>
-
+    <div>
+        <p>
+        <form name="Formula" method=get>
+        Formula Weights:
+        <input type="text" name="weights" value="{{ weights | safe }}">
+        <button type="submit">Update</button>
+          <ul>Formula:
+            <li>- Median Wage * (negative) weight_wage</li>
+            <li>Digital Literacy * weight_dl + </li>
+            <li>Digital Math Ability * weight_dm + </li>
+            <li>PISA Math scores * weight_math + </li>
+            <li>PISA Reading Scores * weight +</li>
+            <li>PISA Science Scores * weight +</li>
+            <li>PISA Share of Top Math Performers * weight +</li>
+        </ul>
+        </p>
+    </div>
+    <div>
+        <p>
+        <iframe width="600" height="450" src="http://www.openheatmap.com/embed.html?map=PyrocatechuicCircumvolutoryProthoraxs"></iframe>
+        <div>
+            {{ script | safe }}
+            {{ div | safe }}
+        </div>
+        </p>
+        {{ tables | safe }}
+    </div>
+</div> <!-- /page-wrap -->
 {% endblock %}

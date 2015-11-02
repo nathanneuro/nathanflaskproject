@@ -58,33 +58,31 @@ def graph1():
     args = request.args
     weights = getitem(args, 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
     #9 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
-    session = requests.Session()
-    session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-    df['weight_score'] = df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8] + df['citi_score']*weights[9]
-    df = df.set_index(['City.name'])
-    df = df[df.index != 0]
-    df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    #session = requests.Session()
+    #session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
 
     # Raw data to Pandas dataframe
     df = pd.read_csv('static/Code_Worker_Quest.csv')
     #[income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
-    #countries = data.loc[data.Country.Name == Tr
+    
     df.set_index(['Country.Name'], inplace = True)
-
-    top_countries = df.iloc[:10,]
-    # top_countries = top_countries.iloc[:,list(1,24)]
+    df['country_weight'] = (df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8])/9
+    # df = df[df.index != 0]
+    df = df.sort_values('country_weight', axis=0, ascending=False, na_position='last')
+    top_countries = pd.DataFrame(df.iloc[:10,[1,23]])
+    #tchtml = top_countries.to_html(classes='country')
     # Making the plot
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
-    plot = plt.figure(tools=TOOLS,
-                      title='Optimality of Countries for hiring Code Workers',
-                      x_axis_label='Scores')
-    #plot.line(df, , color='green', legend='A', alpha=0.7)
+    #plot = plt.figure(tools=TOOLS,
+                     # title='Optimality of Countries for hiring Code Workers',
+                     # x_axis_label='Scores')
+    #plot.line(top_countries, 'Country.Name', values = 'weight_score', color='green', legend='A', alpha=0.7)
     #plot.line(df, , color='red', legend='B', alpha=0.7)
-
-    plot.yaxis.axis_label = '% Variation from Mean'
-    script, div = components(plot)
+    # bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
+    #plot.yaxis.axis_label = '% Variation from Mean'
     
-    return render_template('graph1.html', script=script, div=div, weights=weights, tables=top_countries.to_html(classes='country'))
+    script, div = components(plot)
+    return render_template('graph1.html', script=script, div=div, weights=weights)
 
 @app.route('/graph2')
 def graph2():
@@ -99,7 +97,7 @@ def graph2():
     df = pd.read_csv('static/Code_Worker_Quest.csv')
     df = df.fillna(0)
     # Create custom column
-    df['weight_score'] = df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8] + df['citi_score']*weights[9]
+    df['weight_score'] = (df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8] + df['citi_score']*weights[9])/10
     df = df.set_index(['City.name'])
     df = df[df.index != 0]
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
@@ -107,7 +105,6 @@ def graph2():
     #top_cities_disp['City.name'] = df.loc['City.name']
     #top_cities_disp['weight_score'] = df.loc['weight_score']
     #top_cities_disp = top_cities_disp[:5,]
-    top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     #top_cities_disp = top_cities_disp.sort_values('weight_score', axis=0, ascending=False, na_position='last')
 
     # Making the plot
@@ -130,12 +127,9 @@ def graph2():
     
     top_cities = pd.DataFrame(df.iloc[:5,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
     top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-    bar = Bar(top_cities, 'Country.Name', values = 'weight_score',)
-    script, div = components(p)
+    bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
+    script, div = components(bar)
     return render_template('graph2.html', script=script, div=div, weights=weights, tables=top_cities.to_html(classes='city'))
-
-
-
 
 
 @app.route('/stockgraph')
@@ -170,4 +164,4 @@ def stockgraph():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 33507))
-    app.run(host='0.0.0.0',port=port, debug=False)
+    app.run(host='0.0.0.0',port=port, debug=True)

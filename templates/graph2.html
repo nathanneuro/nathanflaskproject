@@ -7,12 +7,22 @@
 <h1> Top Five Cities for Tech Hire Sourcing </h1>
 <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
 <div>
-    <form name="Weights" method=get>
+        <p>
+        <form name="Formula" method=get>
         Formula Weights:
-        <input type="text" name="weights" value="{{ weights }}">
+        <input type="text" name="weights" value="{{ weights | safe }}">
         <button type="submit">Update</button>
-
-    <p>
+          <ul>Formula:
+            <li>- Median Wage * (negative) weight_wage</li>
+            <li>Digital Literacy * weight_dl + </li>
+            <li>Digital Math Ability * weight_dm + </li>
+            <li>PISA Math scores * weight_math + </li>
+            <li>PISA Reading Scores * weight +</li>
+            <li>PISA Science Scores * weight +</li>
+            <li>PISA Share of Top Math Performers * weight +</li>
+            <li>Citi Group 2025 HotSpots City Financial Forecast * weight (second graph only)</li>
+        </ul>
+        </p>
     <img src="static/images/topcities.png">
     {{ script | safe }}    
     {{ div | safe }}
