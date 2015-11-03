@@ -87,7 +87,7 @@ def show_table():
 def graph1():
     #form = MyForm()
     args = request.args
-    weights = getitem(request.args.getlist(), 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
+    weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
     if isinstance(weights, str) == True:
         print("oh no, a string")
         weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
@@ -176,7 +176,7 @@ def graph2():
     top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
     script, div = components(bar)
-    return render_template('graph2.html', script=script, div=div, weights=weights, tables=top_cities.to_html(classes='city'))
+    return render_template('graph2.html', form=form, script=script, div=div, weights=weights, tables=top_cities.to_html(classes='city'))
 
 
 @app.route('/stockgraph')
