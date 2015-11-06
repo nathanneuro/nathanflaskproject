@@ -10,6 +10,10 @@
     box-shadow: 0 0 20px black;
 }
 
+#links {
+font-size:16pt
+}
+
 #bg {
   position: fixed; 
   top: -50%; 

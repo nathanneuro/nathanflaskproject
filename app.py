@@ -30,27 +30,28 @@ def getitem(obj, item, default):
         return obj[item]
 
 class NineForm(Form):
-    neg = FloatField(label='weight', default=-1)
-    half1 = FloatField(label='weight', default=0.5)
-    half2 = FloatField(label='weight', default=0.5)
-    half3 = FloatField(label='weight', default=0.5)
-    pos1 = FloatField(label='weight', default=1)
-    qua2 = FloatField(label='weight', default=0.25)
-    qua3 = FloatField(label='weight', default=0.25)
-    qua4 = FloatField(label='weight', default=0.25)
-    qua5 = FloatField(label='weight', default=0.25)        
+    neg = FloatField(label='Median Wage', default=-1)
+    half1 = FloatField(label='Observed GDP Growth', default=0.5)
+    half2 = FloatField(label='Predicted GPD Growth (OPEC)', default=0.5)
+    half3 = FloatField(label='PISA Digital Literacy', default=0.5)
+    pos1 = FloatField(label='PISA Digital Math Ability', default=1)
+    qua2 = FloatField(label='PISA Math scores', default=0.25)
+    qua3 = FloatField(label='PISA Reading Scores', default=0.25)
+    qua4 = FloatField(label='PISA Science Scores', default=0.25)
+    qua5 = FloatField(label='PISA Share of Top Math Performers', default=0.25)
+      
 
 class TenForm(Form):
     neg = FloatField(label='Median Wage', default=-1)
-    half1 = FloatField(label='Digital Literacy', default=0.5)
-    half2 = FloatField(label='weight', default=0.5)
-    half3 = FloatField(label='weight', default=0.5)
-    pos1 = FloatField(label='weight', default=1)
-    qua2 = FloatField(label='weight', default=0.25)
-    qua3 = FloatField(label='weight', default=0.25)
-    qua4 = FloatField(label='weight', default=0.25)
-    qua5 = FloatField(label='weight', default=0.25)
-    pos2 = FloatField(label='weight', default=1)
+    half1 = FloatField(label='Observed GDP Growth', default=0.5)
+    half2 = FloatField(label='Predicted GPD Growth (OPEC)', default=0.5)
+    half3 = FloatField(label='PISA Digital Literacy', default=0.5)
+    pos1 = FloatField(label='PISA Digital Math Ability', default=1)
+    qua2 = FloatField(label='PISA Math scores', default=0.25)
+    qua3 = FloatField(label='PISA Reading Scores', default=0.25)
+    qua4 = FloatField(label='PISA Science Scores', default=0.25)
+    qua5 = FloatField(label='PISA Share of Top Math Performers', default=0.25)
+    pos2 = FloatField(label='City Financial Forecast (Citi Group)', default=1)
 
 
 @app.route('/')
@@ -85,7 +86,7 @@ def show_table():
 
 @app.route('/graph1', methods=('GET', 'POST'))
 def graph1():
-    #form = MyForm()
+    form = NineForm()
     args = request.args
     weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
     if isinstance(weights, str) == True:
