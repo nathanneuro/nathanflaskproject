@@ -12,6 +12,7 @@ from collections import OrderedDict
 from flask_wtf import Form
 from wtforms import FloatField, validators #, StringField
 import flaskconfig as config
+import utils
 
 #set FLASKDEMO_SETTINGS = '/../../flaskkey.cfg'
 app = Flask(__name__)
@@ -89,6 +90,7 @@ def graph1():
     form = NineForm()
     args = request.args
     weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
+    print(weights)
     if isinstance(weights, str) == True:
         print("oh no, a string")
         weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
@@ -123,7 +125,7 @@ def graph1():
     #script, div = components(plot)
     script = 1
     div = 1
-    return render_template('graph1.html', script=script, div=div, weights=weights, tables=tchtml)
+    return render_template('graph1.html', form=form, script=script, div=div, weights=weights, tables=tchtml)
 
 @app.route('/graph2', methods=('GET', 'POST'))
 def graph2():
@@ -134,8 +136,8 @@ def graph2():
     print(weights)
     if isinstance(weights, str) == True:
         print("oh no, a string")
-        
-        #10 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers, citi_score]
+        weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
+        targets = ['income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers', 'citi_score']
     
     #if(raw.json().get('error') is True):  # changed from == unicode
         # any returned error message means there's uh, an error
@@ -145,7 +147,7 @@ def graph2():
     df = pd.read_csv('static/Code_Worker_Quest.csv')
     df = df.fillna(0)
     # Create custom column
-    df['weight_score'] = (df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8] + df['citi_score']*weights[9])/10
+    df = utils.norm_df(df, weights, targets)
     df = df.set_index(['City.name'])
     df = df[df.index != 0]
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
@@ -173,8 +175,9 @@ def graph2():
             **_chart_styling)
     
     
-    top_cities = pd.DataFrame(df.iloc[:5,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
+    top_cities = pd.DataFrame(df.iloc[:,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
     top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    top_cities = top_cities.iloc[:5,:]
     bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
     script, div = components(bar)
     return render_template('graph2.html', form=form, script=script, div=div, weights=weights, tables=top_cities.to_html(classes='city'))

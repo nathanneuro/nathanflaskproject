@@ -9,19 +9,21 @@
 <div>
         <p>
         <form name="weights" method=get>
-        Formula Weights:
-        <input type="text" name="weights" value="{{ weights | safe }}">
+      {{ form.crsf_token }}
+    <table>
+    {% for field in form %}
+        <td>{{ field.label }}</td>
+        <td>{{ field(size=12) }}</td>
+        {% if field.errors %}
+      <td><ul class=errors>
+            {% for error in field.errors %}
+            <li><font color="red">{{ error }}</font></li>
+            {% endfor %}</ul></td>
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
         <button type="submit">Update</button>
-          <ul>Formula:
-            <li>- Median Wage * (negative) weight_wage</li>
-            <li>Digital Literacy * weight_dl + </li>
-            <li>Digital Math Ability * weight_dm + </li>
-            <li>PISA Math scores * weight_math + </li>
-            <li>PISA Reading Scores * weight +</li>
-            <li>PISA Science Scores * weight +</li>
-            <li>PISA Share of Top Math Performers * weight +</li>
-            <li>Citi Group 2025 HotSpots City Financial Forecast * weight (second graph only)</li>
-        </ul>
         </p>
     <img src="static/images/topcities.png">
     {{ script | safe }}    

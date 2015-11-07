@@ -8,11 +8,12 @@
     <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
     <div>
     <p>
+    <form name="weights" method=get>
+      {{ form.crsf_token }}
     <table>
     {% for field in form %}
-        <td>\( {{ field.name }} \)</td>
-        <td>{{ field(size=12) }}</td>
         <td>{{ field.label }}</td>
+        <td>{{ field(size=12) }}</td>
         {% if field.errors %}
       <td><ul class=errors>
             {% for error in field.errors %}
@@ -23,16 +24,6 @@
     {% endfor %}
     </table>
     <button type="submit">Update</button>
-          <ul>Formula:
-            <li>- Median Wage * (negative) weight_wage</li>
-            <li>Digital Literacy * weight_dl + </li>
-            <li>Digital Math Ability * weight_dm + </li>
-            <li>PISA Math scores * weight_math + </li>
-            <li>PISA Reading Scores * weight +</li>
-            <li>PISA Science Scores * weight +</li>
-            <li>PISA Share of Top Math Performers * weight +</li>
-        </ul>
-        </p>
     </div>
     <div>
         <p>
