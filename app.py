@@ -18,10 +18,11 @@ import flaskconfig as config
 import utils
 
 #set FLASKDEMO_SETTINGS = '/flaskconfig.py'
-app.config.from_object('flaskconfig.py')
 #app.config.from_envvar('FLASKDEMO_SETTINGS')
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('config')
+app.config.from_pyfile('flaskconfig.py')
 app.secret_key = config.SECRET_KEY
 # recommended  Flask(__name__.split('.')[0])
 
