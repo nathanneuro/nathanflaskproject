@@ -17,11 +17,12 @@ from wtforms import FloatField, validators, FieldList, FormField #, StringField
 import flaskconfig as config
 import utils
 
-#set FLASKDEMO_SETTINGS = '/../../flaskkey.cfg'
+#set FLASKDEMO_SETTINGS = '/flaskconfig.py'
+app.config.from_object('flaskconfig.py')
+#app.config.from_envvar('FLASKDEMO_SETTINGS')
+
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
-#app.config.from_object('flaskdemo.default_settings')
-#app.config.from_envvar('FLASKDEMO_SETTINGS')
 # recommended  Flask(__name__.split('.')[0])
 
 
