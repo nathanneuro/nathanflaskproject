@@ -17,4 +17,4 @@ df['top_mathers'] = (df['Share.Top.Mathers.pisa2012'] / df['Share.Top.Mathers.pi
 df['citi_score'] = (df['citigroup2025.score'] / df['citigroup2025.score'].mean(axis=0)) * 100
 
 
-df.to_csv("test.csv")
+df.to_csv("../static/Code_Worker_Quest.csv")

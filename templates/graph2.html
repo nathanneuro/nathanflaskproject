@@ -8,8 +8,7 @@
 <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
 <div>
         <p>
-        <form name="weights" method=get>
-      {{ form.crsf_token }}
+        <form name="weights" method=POST>
     <table>
     {% for field in form %}
         <td>{{ field.label }}</td>

@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 from collections import OrderedDict
 from flask_wtf import Form
-from wtforms import FloatField, validators #, StringField
+from wtforms import FloatField, validators, FieldList, FormField #, StringField
 import flaskconfig as config
 import utils
 
@@ -31,28 +31,28 @@ def getitem(obj, item, default):
         return obj[item]
 
 class NineForm(Form):
-    neg = FloatField(label='Median Wage', default=-1)
-    half1 = FloatField(label='Observed GDP Growth', default=0.5)
-    half2 = FloatField(label='Predicted GPD Growth (OPEC)', default=0.5)
-    half3 = FloatField(label='PISA Digital Literacy', default=0.5)
-    pos1 = FloatField(label='PISA Digital Math Ability', default=1)
-    qua2 = FloatField(label='PISA Math scores', default=0.25)
-    qua3 = FloatField(label='PISA Reading Scores', default=0.25)
-    qua4 = FloatField(label='PISA Science Scores', default=0.25)
-    qua5 = FloatField(label='PISA Share of Top Math Performers', default=0.25)
+    neg = FloatField(label='Median Wage', default=-1, validators=[validators.InputRequired()])
+    half1 = FloatField(label='Observed GDP Growth', default=0.5, validators=[validators.InputRequired()])
+    half2 = FloatField(label='Predicted GPD Growth (OPEC)', default=0.5, validators=[validators.InputRequired()])
+    half3 = FloatField(label='PISA Digital Literacy', default=0.5, validators=[validators.InputRequired()])
+    pos1 = FloatField(label='PISA Digital Math Ability', default=1, validators=[validators.InputRequired()])
+    qua2 = FloatField(label='PISA Math scores', default=0.25, validators=[validators.InputRequired()])
+    qua3 = FloatField(label='PISA Reading Scores', default=0.25, validators=[validators.InputRequired()])
+    qua4 = FloatField(label='PISA Science Scores', default=0.25, validators=[validators.InputRequired()])
+    qua5 = FloatField(label='PISA Share of Top Math Performers', default=0.25, validators=[validators.InputRequired()])
       
 
 class TenForm(Form):
-    neg = FloatField(label='Median Wage', default=-1)
-    half1 = FloatField(label='Observed GDP Growth', default=0.5)
-    half2 = FloatField(label='Predicted GPD Growth (OPEC)', default=0.5)
-    half3 = FloatField(label='PISA Digital Literacy', default=0.5)
-    pos1 = FloatField(label='PISA Digital Math Ability', default=1)
-    qua2 = FloatField(label='PISA Math scores', default=0.25)
-    qua3 = FloatField(label='PISA Reading Scores', default=0.25)
-    qua4 = FloatField(label='PISA Science Scores', default=0.25)
-    qua5 = FloatField(label='PISA Share of Top Math Performers', default=0.25)
-    pos2 = FloatField(label='City Financial Forecast (Citi Group)', default=1)
+    neg = FloatField(label='Median Wage', default=-1, validators=[validators.InputRequired()])
+    half1 = FloatField(label='Observed GDP Growth', default=0.5, validators=[validators.InputRequired()])
+    half2 = FloatField(label='Predicted GPD Growth (OPEC)', default=0.5, validators=[validators.InputRequired()])
+    half3 = FloatField(label='PISA Digital Literacy', default=0.5, validators=[validators.InputRequired()])
+    pos1 = FloatField(label='PISA Digital Math Ability', default=1, validators=[validators.InputRequired()])
+    qua2 = FloatField(label='PISA Math scores', default=0.25, validators=[validators.InputRequired()])
+    qua3 = FloatField(label='PISA Reading Scores', default=0.25, validators=[validators.InputRequired()])
+    qua4 = FloatField(label='PISA Science Scores', default=0.25, validators=[validators.InputRequired()])
+    qua5 = FloatField(label='PISA Share of Top Math Performers', default=0.25, validators=[validators.InputRequired()])
+    pos2 = FloatField(label='City Financial Forecast (Citi Group)', default=1, validators=[validators.InputRequired()])
 
 
 @app.route('/')
@@ -85,32 +85,40 @@ def show_table():
     return render_template('showtable.html', tables=[countries.to_html(classes='country'), cities.to_html(classes='city')], titles= ['By Country', 'By City'])
 
 
-@app.route('/graph1', methods=('GET', 'POST'))
+@app.route('/graph1', methods=['GET', 'POST'])
 def graph1():
     form = NineForm()
-    args = request.args
-    weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25])
-    print(weights)
+    weights = getitem(request.args, 'weights', list([-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]))
+    if request.method == 'POST' and form.validate():
+        weights = []
+        i = 0
+        for field in form:
+            if i != 0:
+                weights.append(field.data)
+            i = i + 1
+        print(weights, "from form")
+
     if isinstance(weights, str) == True:
         print("oh no, a string")
         weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
-    #if form.validate_on_submit():
-    #    return redirect('/graph1')
+
+    targets = ['income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers']
+    print(weights)
+    print("length of weights", len(weights))
     #9 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
     #session = requests.Session()
     #session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
 
     # Raw data to Pandas dataframe
     df = pd.read_csv('static/Code_Worker_Quest.csv')
-    #[income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
     
     df.set_index(['Country.Name'], inplace = True)
-    df['country_weight'] = (df['income']*weights[0] + df['gdp_obs']*weights[1] + df['gdp_proj']*weights[2] + df['digi_read']*weights[3] + df['digi_math']*weights[4] + df['pisa_math']*weights[5] + df['pisa_read']*weights[6] + df['pisa_sci']*weights[7] + df['top_mathers']*weights[8])/9
-    # df = df[df.index != 0]
-    df = df.sort_values('country_weight', axis=0, ascending=False, na_position='last')
+    df = utils.norm_df(df, weights, targets)
+    df = df[df.index != '0']
+    df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     top_countries = pd.DataFrame(df.groupby(df.index).first())
-    top_countries = top_countries.sort_values('country_weight', axis=0, ascending=False, na_position='last')
-    top_countries = top_countries.iloc[:10, [23]]
+    top_countries = top_countries.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    top_countries = top_countries.iloc[:10, [1, -1]]
     tchtml = top_countries.to_html(classes='country')
     # Making the plot
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
@@ -127,17 +135,25 @@ def graph1():
     div = 1
     return render_template('graph1.html', form=form, script=script, div=div, weights=weights, tables=tchtml)
 
-@app.route('/graph2', methods=('GET', 'POST'))
+@app.route('/graph2', methods=['GET', 'POST'])
 def graph2():
     form = TenForm()
-    if form.validate_on_submit():
-        return redirect('/graph2')
     weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,1])
     print(weights)
+    if request.method == 'POST' and form.validate():
+        weights = []
+        i = 0
+        for field in form:
+            if i != 0:
+                weights.append(field.data)
+            i = i + 1
+        print(weights, "from form")
+
     if isinstance(weights, str) == True:
         print("oh no, a string")
         weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
-        targets = ['income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers', 'citi_score']
+    
+    targets = ['income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers', 'citi_score']
     
     #if(raw.json().get('error') is True):  # changed from == unicode
         # any returned error message means there's uh, an error
@@ -145,17 +161,19 @@ def graph2():
     #else:
     # Raw data to Pandas dataframe
     df = pd.read_csv('static/Code_Worker_Quest.csv')
-    df = df.fillna(0)
-    # Create custom column
-    df = utils.norm_df(df, weights, targets)
+    # Set df index before calling norm_df
     df = df.set_index(['City.name'])
-    df = df[df.index != 0]
+    df = df.fillna(0)
+    df = df[df.index != '0']
+
+    # Call norm_df function from utilities
+    df = utils.norm_df(df, weights, targets)
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    
     # Create new dataframe of five top cities
-    #top_cities_disp['City.name'] = df.loc['City.name']
-    #top_cities_disp['weight_score'] = df.loc['weight_score']
-    #top_cities_disp = top_cities_disp[:5,]
-    #top_cities_disp = top_cities_disp.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    top_cities = pd.DataFrame(df.iloc[:,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
+    top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    top_cities = top_cities.iloc[:5,:]
 
     # Making the plot
     TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
@@ -175,9 +193,6 @@ def graph2():
             **_chart_styling)
     
     
-    top_cities = pd.DataFrame(df.iloc[:,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
-    top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-    top_cities = top_cities.iloc[:5,:]
     bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
     script, div = components(bar)
     return render_template('graph2.html', form=form, script=script, div=div, weights=weights, tables=top_cities.to_html(classes='city'))
