@@ -84,11 +84,17 @@ total <- total[-67,]
 total[26,]
 total <- total[-26,]
 
+Code_Worker_Quest <- Code_Worker_Quest[,3:25]
+Code_Worker_Quest <- as.data.table(Code_Worker_Quest)
+pygal_world <- as.data.table(pygal_world)
+setnames(pygal_world, "Country", "Country.Name")
+setnames(pygal_world, "code", "pygal_code")
 
 
 
+full_comb <- merge(Code_Worker_Quest, pygal_world, by = "Country.Name", all.x = T)
 
-write.csv(total, "Code_Worker_Quest.csv", row.names=FALSE, na="")
+write.csv(full_comb, "Code_Worker_Quest.csv", row.names=FALSE, na="")
 
 # FULL OUTER JOIN
 # Result <- merge(Employees,Departments, all=TRUE)

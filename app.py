@@ -1,14 +1,17 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, Response
 import requests
 from bokeh.embed import components
 import bokeh.plotting as plt
-from bokeh.plotting import figure
-from bokeh.palettes import brewer
-from bokeh.charts import Bar, output_file
+#from bokeh.plotting import figure
+#from bokeh.palettes import brewer
+#from bokeh.charts import Bar, output_file
+#from bokeh.resources import INLINE
+#from bokeh.util.string import encode_utf8
+import pygal
 import os
 import pandas as pd
 import numpy as np
-from collections import OrderedDict
+# from collections import OrderedDict
 from flask_wtf import Form
 from wtforms import FloatField, validators, FieldList, FormField #, StringField
 import flaskconfig as config
@@ -87,6 +90,7 @@ def show_table():
 
 @app.route('/graph1', methods=['GET', 'POST'])
 def graph1():
+    global df
     form = NineForm()
     weights = getitem(request.args, 'weights', list([-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]))
     if request.method == 'POST' and form.validate():
@@ -112,28 +116,22 @@ def graph1():
     # Raw data to Pandas dataframe
     df = pd.read_csv('static/Code_Worker_Quest.csv')
     
-    df.set_index(['Country.Name'], inplace = True)
-    df = utils.norm_df(df, weights, targets)
+    df.set_index(['Country.Code'], inplace = True)
+    df = df.fillna(0)
     df = df[df.index != '0']
+    df = utils.norm_df(df, weights, targets)
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     top_countries = pd.DataFrame(df.groupby(df.index).first())
     top_countries = top_countries.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-    top_countries = top_countries.iloc[:10, [1, -1]]
+    top_countries = top_countries.iloc[:10, [0, -1]]
     tchtml = top_countries.to_html(classes='country')
-    # Making the plot
-    TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
-    #plot = plt.figure(tools=TOOLS,
-                     # title='Optimality of Countries for hiring Code Workers',
-                     # x_axis_label='Scores')
-    #plot.line(top_countries, 'Country.Name', values = 'weight_score', color='green', legend='A', alpha=0.7)
-    #plot.line(df, , color='red', legend='B', alpha=0.7)
-    # bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
-    #plot.yaxis.axis_label = '% Variation from Mean'
-    
-    #script, div = components(plot)
-    script = 1
-    div = 1
-    return render_template('graph1.html', form=form, script=script, div=div, weights=weights, tables=tchtml)
+    return render_template('graph1.html', form=form, weights=weights, tables=tchtml)
+
+@app.route('/graph1plot/')
+def graph1plot():
+    global df
+    plot = utils.world_plot(df, "title optional")
+    return Response(response=plot, content_type='image/svg+xml')
 
 @app.route('/graph2', methods=['GET', 'POST'])
 def graph2():
@@ -171,31 +169,19 @@ def graph2():
     df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     
     # Create new dataframe of five top cities
-    top_cities = pd.DataFrame(df.iloc[:,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
+    top_cities = pd.DataFrame(df.iloc[:,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,-0]])
     top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     top_cities = top_cities.iloc[:5,:]
 
     # Making the plot
-    TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
+    plot = utils.line_plot(top_cities, 5, targets, "title optional")
     
-    colors = brewer["Spectral"][5]
+    #js_resources = INLINE.render_js()
+    #css_resources = INLINE.render_css()
+    
+    #script, div = components(plot, INLINE)
+    return render_template( 'graph2.html', form=form, plot=plot, weights=weights, tables=top_cities.to_html(classes='city'))
 
-    def create_area_chart(data, palette):
-        _chart_styling = dict(height=800,
-                      width=1200,
-                      xgrid=False,
-                      ygrid=True,
-                      tools=TOOLS)
-        return Area(data,
-            title="Top Five Tech Hire Cities",
-            stacked=True,
-            palette=colors,
-            **_chart_styling)
-    
-    
-    bar = Bar(top_cities, 'Country.Name', values = 'weight_score')
-    script, div = components(bar)
-    return render_template('graph2.html', form=form, script=script, div=div, weights=weights, tables=top_cities.to_html(classes='city'))
 
 
 @app.route('/stockgraph')

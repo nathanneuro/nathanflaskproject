@@ -7,29 +7,30 @@
 <h1> Top Five Cities for Tech Hire Sourcing </h1>
 <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
 <div>
-        <p>
-        <form name="weights" method=POST>
+    <p>
+          {{ plot | safe }}
+    </p>
+    <p>
+    <form name="weights" method=POST>
     <table>
+      <th>Customize Factor Weights:</th>
     {% for field in form %}
         <td>{{ field.label }}</td>
         <td>{{ field(size=12) }}</td>
         {% if field.errors %}
-      <td><ul class=errors>
-            {% for error in field.errors %}
+          <td><ul class=errors>
+          {% for error in field.errors %}
             <li><font color="red">{{ error }}</font></li>
-            {% endfor %}</ul></td>
+          {% endfor %}</ul></td>
         {% endif %}
         </tr>
     {% endfor %}
     </table>
-        <button type="submit">Update</button>
-        </p>
-    <img src="static/images/topcities.png">
-    {{ script | safe }}    
-    {{ div | safe }}
+    <button type="submit">Update</button>
+    <!--img src="static/images/topcities.png"-->
     </p>
 </div>
-<div>
+<div id="table-wrap">
     <p>
         {{ tables | safe }}
     </p>

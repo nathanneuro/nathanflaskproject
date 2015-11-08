@@ -1,5 +1,7 @@
 #utils.py
 import pandas as pd
+import pygal
+
 
 def norm_df (df, weights, targets):
     df['norm_income'] = df['income']*weights[0]
@@ -25,3 +27,28 @@ def norm_df (df, weights, targets):
     
         
     return df
+
+
+def line_plot(df, subjects, factors, give_title):
+    plot = pygal.Line(x_label_rotation=20, stroke_style={'width': 3}, margin=10, y_title='Factor as % of Mean * Weight')
+    plot.x_labels = factors
+
+    for subject in range(subjects):
+        row_values = df.iloc[subject,]
+        row_values = row_values.values
+        print(row_values[1:])
+        cols = df.columns.tolist()
+        print(cols[1:])
+        plot.add(df.index[subject], row_values[1:])
+
+    return plot.render()
+
+def world_plot(df, give_title):
+    plot = pygal.maps.world.World()
+    #worldmap_chart.title = give_title
+    codes = df['pygal_code'].tolist()
+    scores = df['weight_score'].tolist()
+    world_dict = dict(zip(codes, scores))
+    plot.add('Weighted Score', world_dict)
+    return plot.render(is_unicode=True)
+

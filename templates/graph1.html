@@ -7,7 +7,10 @@
     <h1> Global Heatmap for Tech Hire Sources </h1>
     <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
     <div>
-    <p>
+        <figure>
+            <embed type="image/svg+xml" src="/graph1plot/" />
+        </figure>    
+        <p>
     <form name="NineForm" method=POST>
     <table>
     {% for field in form %}
@@ -25,14 +28,9 @@
     <button type="submit">Update</button>
     </div>
     <div>
-        <p>
-        <iframe width="600" height="450" src="http://www.openheatmap.com/embed.html?map=PyrocatechuicCircumvolutoryProthoraxs"></iframe>
-        <div>
-            {{ script | safe }}
-            {{ div | safe }}
-        </div>
-        </p>
-        {{ tables | safe }}
+        <div id="table-wrap">
+          {{ tables | safe }}
+        </div> <!-- /table-wrap -->
     </div>
 </div> <!-- /page-wrap -->
 {% endblock %}
