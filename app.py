@@ -23,7 +23,8 @@ import utils
 app = Flask(__name__) # , instance_relative_config=True)
 #app.config.from_object('config')
 #app.config.from_pyfile('config.py')
-app.secret_key = os.environ.get('SECRET_KEY')
+#app.secret_key = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY']= 'SECRET_KEY' in os.environ
 # recommended  Flask(__name__.split('.')[0])
 
 
@@ -218,4 +219,5 @@ def stockgraph():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 33507))
-    app.run(host='0.0.0.0',port=port, debug=True)
+    app.run(host='0.0.0.0',port=port, debug=("DEBUG" in os.environ))
+    print(os.environ)
