@@ -14,15 +14,15 @@ import numpy as np
 # from collections import OrderedDict
 from flask_wtf import Form
 from wtforms import FloatField, validators, FieldList, FormField #, StringField
-import flaskconfig as config
+#import flaskconfig as config
 import utils
 
 #set FLASKDEMO_SETTINGS = '/flaskconfig.py'
 #app.config.from_envvar('FLASKDEMO_SETTINGS')
 
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_object('config')
-app.config.from_pyfile('flaskconfig.py')
+#app.config.from_object('config')
+app.config.from_pyfile('config.py')
 app.secret_key = config.SECRET_KEY
 # recommended  Flask(__name__.split('.')[0])
 
