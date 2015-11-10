@@ -24,7 +24,7 @@ app = Flask(__name__) # , instance_relative_config=True)
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'development_test'
 SECRET_KEY = str(os.getenv("SECRET_KEY"))
-DEBUG = str(os.getenv("DEBUG"))
+DEBUG = (os.getenv("DEBUG"), True)
 #app.config.from_object('config')
 #app.config.from_pyfile('config.py')
 #app.secret_key = os.environ.get('SECRET_KEY')
@@ -142,35 +142,34 @@ def graph1plot():
     plot = utils.world_plot(dfworld, "title optional")
     return Response(response=plot, content_type='image/svg+xml')
 
+@app.route('/graph2plot/')
+def graph2plot():
+    global top_cities
+    factor_names = ['Gallup Median Wage', 'Observed GDP Growth', 'Predicted GPD Growth (OPEC)', 'PISA Digital Literacy', 'PISA Digital Math Ability', 'PISA Math scores', 'PISA Reading Scores', 'PISA Science Scores', 'PISA Share of Top Math Performers', 'Citi Group Financial Forecast']
+    
+    plot = utils.line_plot(top_cities, 5, factor_names, "title optional")
+    return Response(response=plot, content_type='image/svg+xml')
+
+
 @app.route('/graph2', methods=['GET', 'POST'])
 def graph2():
+    global top_cities
     form = TenForm()
     weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,1])
     print(weights)
     targets = ['gallup.median.income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers', 'citi_score']
-    factor_names = ['Gallup Median Wage', 'Observed GDP Growth', 'Predicted GPD Growth (OPEC)', 'PISA Digital Literacy', 'PISA Digital Math Ability', 'PISA Math scores', 'PISA Reading Scores', 'PISA Science Scores', 'PISA Share of Top Math Performers', 'Citi Group Financial Forecast']
-
-    def set_top_cities():
-        df2 = pd.read_csv('static/Code_Worker_Quest.csv')
-
-        # Set df index before calling norm_df
-        df2 = df2.fillna(0)
-
-        df2 = df2[df2['City.name'] != 0]
-        # Call norm_df function from utilities
-        df2 = utils.norm_df(df2, weights, targets)
-        df2.set_index(['City.name'], inplace = True)
-        df2 = df2.sort_values('weight_score', axis=0, ascending=False)
-        #print(df2[1:5].values)
-        #, na_position='last')
-        # Create new dataframe of five top cities
-        top_cities = df2.iloc[:5,-11:]
-        # top_cities = pd.DataFrame(df.iloc[:,[-11, -10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
-        top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-        #print(top_cities)
-        return top_cities
+    
 
 
+    
+    df2 = pd.read_csv('static/Code_Worker_Quest.csv')
+
+    # Set df index before calling norm_df
+    df2 = df2.fillna(0)
+
+    df2 = df2[df2['City.name'] != 0]
+    # Call norm_df function from utilities
+    dfline = utils.norm_df(df2, weights, targets)
     if request.method == 'POST' and form.validate():
         weights = []
         i = 0
@@ -178,10 +177,19 @@ def graph2():
             if i != 0:
                 weights.append(field.data)
             i = i + 1
+        dfline = utils.norm_df(df2, weights, targets)
         #print(weights, "from form")
-        set_top_cities()
-        plot = utils.line_plot(set_top_cities(), 5, factor_names, "title optional")
-        return render_template( 'graph2.html', form=form, plot=plot, weights=weights, tables=set_top_cities().to_html(classes='city'))
+
+    dfline.set_index(['City.name'], inplace = True)
+    dfline = dfline.sort_values('weight_score', axis=0, ascending=False)
+    #print(df2[1:5].values)
+    #, na_position='last')
+    # Create new dataframe of five top cities
+    top_cities = df2.iloc[:5,-11:]
+    # top_cities = pd.DataFrame(df.iloc[:,[-11, -10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
+    top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    #print(top_cities)
+
 
 
     if isinstance(weights, str) == True:
@@ -189,10 +197,7 @@ def graph2():
         weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
     
 
-    # Making the plot
-    plot = utils.line_plot(set_top_cities(), 5, factor_names, "title optional")
-
-    return render_template( 'graph2.html', form=form, plot=plot, weights=weights, tables=set_top_cities().to_html(classes='city'))
+    return render_template('graph2.html', form=form, weights=weights, tables=top_cities.to_html(classes='city'))
 
 
 
