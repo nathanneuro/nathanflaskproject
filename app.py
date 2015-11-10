@@ -23,7 +23,7 @@ import utils
 app = Flask(__name__) # , instance_relative_config=True)
 #app.config.from_object('config')
 #app.config.from_pyfile('config.py')
-app.secret_key = config.SECRET_KEY
+#app.secret_key = config.SECRET_KEY
 # recommended  Flask(__name__.split('.')[0])
 
 
