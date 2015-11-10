@@ -38,8 +38,8 @@ def line_plot(df, subjects, factors, give_title):
         row_values = row_values.values
         print(row_values[1:])
         cols = df.columns.tolist()
-        print(cols[1:])
-        plot.add(df.index[subject], row_values[1:])
+        #print(cols[1:])
+        plot.add(df.index[subject], row_values[:-1])
 
     return plot.render()
 
