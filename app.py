@@ -18,13 +18,18 @@ from wtforms import FloatField, validators, FieldList, FormField #, StringField
 import utils
 
 #set FLASKDEMO_SETTINGS = '/flaskconfig.py'
-app.config.from_envvar('FLASKDEMO_SETTINGS')
+#app.config.from_envvar('nathanflask')
 
 app = Flask(__name__) # , instance_relative_config=True)
+WTF_CSRF_ENABLED = True
+SECRET_KEY = 'development_test'
+SECRET_KEY = str(os.getenv("SECRET_KEY"))
+DEBUG = str(os.getenv("DEBUG"))
 #app.config.from_object('config')
 #app.config.from_pyfile('config.py')
 #app.secret_key = os.environ.get('SECRET_KEY')
-app.config['SECRET_KEY']= "SECRET_KEY" in os.environ
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['WTF_CSRF_ENABLED'] = WTF_CSRF_ENABLED
 # recommended  Flask(__name__.split('.')[0])
 
 
@@ -93,7 +98,7 @@ def show_table():
 
 @app.route('/graph1', methods=['GET', 'POST'])
 def graph1():
-    global df
+    global dfworld
     form = NineForm()
     weights = getitem(request.args, 'weights', list([-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]))
     if request.method == 'POST' and form.validate():
@@ -110,6 +115,7 @@ def graph1():
         weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
 
     targets = ['income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers']
+    factor_names = ['Gallup Median Wage', 'Observed GDP Growth', 'Predicted GPD Growth (OPEC)', 'PISA Digital Literacy', 'PISA Digital Math Ability', 'PISA Math scores', 'PISA Reading Scores', 'PISA Science Scores', 'PISA Share of Top Math Performers']
     print(weights)
     print("length of weights", len(weights))
     #9 total weights for [income, gpd_obs, gdp_proj, digi_read, digi_math, pisa_math, pisa_read, pisa_sci, top_mathers]
@@ -123,7 +129,7 @@ def graph1():
     df = df.fillna(0)
     df = df[df.index != '0']
     df = utils.norm_df(df, weights, targets)
-    df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+    dfworld = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     top_countries = pd.DataFrame(df.groupby(df.index).first())
     top_countries = top_countries.sort_values('weight_score', axis=0, ascending=False, na_position='last')
     top_countries = top_countries.iloc[:10, [0, -1]]
@@ -132,8 +138,8 @@ def graph1():
 
 @app.route('/graph1plot/')
 def graph1plot():
-    global df
-    plot = utils.world_plot(df, "title optional")
+    global dfworld
+    plot = utils.world_plot(dfworld, "title optional")
     return Response(response=plot, content_type='image/svg+xml')
 
 @app.route('/graph2', methods=['GET', 'POST'])
@@ -141,6 +147,30 @@ def graph2():
     form = TenForm()
     weights = getitem(request.args, 'weights', [-1,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,1])
     print(weights)
+    targets = ['gallup.median.income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers', 'citi_score']
+    factor_names = ['Gallup Median Wage', 'Observed GDP Growth', 'Predicted GPD Growth (OPEC)', 'PISA Digital Literacy', 'PISA Digital Math Ability', 'PISA Math scores', 'PISA Reading Scores', 'PISA Science Scores', 'PISA Share of Top Math Performers', 'Citi Group Financial Forecast']
+
+    def set_top_cities():
+        df2 = pd.read_csv('static/Code_Worker_Quest.csv')
+
+        # Set df index before calling norm_df
+        df2 = df2.fillna(0)
+
+        df2 = df2[df2['City.name'] != 0]
+        # Call norm_df function from utilities
+        df2 = utils.norm_df(df2, weights, targets)
+        df2.set_index(['City.name'], inplace = True)
+        df2 = df2.sort_values('weight_score', axis=0, ascending=False)
+        #print(df2[1:5].values)
+        #, na_position='last')
+        # Create new dataframe of five top cities
+        top_cities = df2.iloc[:5,-11:]
+        # top_cities = pd.DataFrame(df.iloc[:,[-11, -10,-9,-8,-7,-6,-5,-4,-3,-2,-1]])
+        top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
+        #print(top_cities)
+        return top_cities
+
+
     if request.method == 'POST' and form.validate():
         weights = []
         i = 0
@@ -148,42 +178,21 @@ def graph2():
             if i != 0:
                 weights.append(field.data)
             i = i + 1
-        print(weights, "from form")
+        #print(weights, "from form")
+        set_top_cities()
+        plot = utils.line_plot(set_top_cities(), 5, factor_names, "title optional")
+        return render_template( 'graph2.html', form=form, plot=plot, weights=weights, tables=set_top_cities().to_html(classes='city'))
+
 
     if isinstance(weights, str) == True:
         print("oh no, a string")
         weights = [-1,0.5,0.5,0.5,1,0.25,0.25,0.25,0.25]
     
-    targets = ['income', 'gpd_obs', 'gdp_proj', 'digi_read', 'digi_math', 'pisa_math', 'pisa_read', 'pisa_sci', 'top_mathers', 'citi_score']
-    
-    #if(raw.json().get('error') is True):  # changed from == unicode
-        # any returned error message means there's uh, an error
-        #return render_template('grapherror.html')
-    #else:
-    # Raw data to Pandas dataframe
-    df = pd.read_csv('static/Code_Worker_Quest.csv')
-    # Set df index before calling norm_df
-    df = df.set_index(['City.name'])
-    df = df.fillna(0)
-    df = df[df.index != '0']
-
-    # Call norm_df function from utilities
-    df = utils.norm_df(df, weights, targets)
-    df = df.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-    
-    # Create new dataframe of five top cities
-    top_cities = pd.DataFrame(df.iloc[:,[1,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,-0]])
-    top_cities = top_cities.sort_values('weight_score', axis=0, ascending=False, na_position='last')
-    top_cities = top_cities.iloc[:5,:]
 
     # Making the plot
-    plot = utils.line_plot(top_cities, 5, targets, "title optional")
-    
-    #js_resources = INLINE.render_js()
-    #css_resources = INLINE.render_css()
-    
-    #script, div = components(plot, INLINE)
-    return render_template( 'graph2.html', form=form, plot=plot, weights=weights, tables=top_cities.to_html(classes='city'))
+    plot = utils.line_plot(set_top_cities(), 5, factor_names, "title optional")
+
+    return render_template( 'graph2.html', form=form, plot=plot, weights=weights, tables=set_top_cities().to_html(classes='city'))
 
 
 
@@ -219,5 +228,4 @@ def stockgraph():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 33507))
-    app.run(host='0.0.0.0',port=port, debug=("DEBUG" in os.environ, False))
-    print(os.environ)
+    app.run(host='0.0.0.0',port=port, debug=True)
