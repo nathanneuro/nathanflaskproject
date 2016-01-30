@@ -79,6 +79,32 @@ def index():
 def proposal():
     return render_template('proposal.html')
 
+@app.route('/proposal2')
+def proposal2():
+    return render_template('proposal2.html')
+
+@app.route('/proposal2_graph1')
+def proposal2_graph1():
+    return render_template('proposal2_graph1.html')
+
+@app.route('/proposal2_graph2')
+def proposal2_graph2():
+    return render_template('proposal2_graph2.html')
+
+
+@app.route('/table2')
+def show_table2():
+    data = pd.read_csv('static/Chasing_Flynn.csv')
+    countries = data
+    countries = countries.sort_values(['Country.Name'], axis=0, ascending=True, na_position='last')
+    countries = countries.set_index(['Country.Name'])
+
+    cities = data
+    cities = cities.sort_values(['City.name'], axis=0, ascending=True, na_position='last')
+    cities = cities.set_index(['City.name'])
+    return render_template('showtable2.html', tables=[countries.to_html(classes='country'), cities.to_html(classes='city')], titles= ['By Country', 'By City'])
+
+
 @app.route('/table')
 def show_table():
     data = pd.read_csv('static/Code_Worker_Quest.csv')
