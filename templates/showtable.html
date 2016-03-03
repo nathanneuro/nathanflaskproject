@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-<div id="page-wrap">
+<div id="bg">
+  <img src="https://amazingcarousel.com/wp-content/uploads/amazingcarousel/2/images/lightbox/golden-wheat-field-lightbox.jpg" alt="">
+</div>
+<div id="page-wrap-sides">
 <h1> Code Worker Quest Data </h1>
-<p> Credit for table styling to <a href="https://sarahleejane.github.io/learning/python/2015/08/09/simple-tables-in-webapps-using-flask-and-pandas-with-python.html">SarahLeeJane</a>.<p>
 {% for table in tables %}
     <h2>{{titles[loop.index]}}</h2>
     {{ table|safe }}

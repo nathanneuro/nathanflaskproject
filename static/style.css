@@ -1,7 +1,7 @@
 #page-wrap {
     position: relative;
     z-index: 2;
-    width: 1000px;
+    width: 900px;
     margin: 50px auto;
     padding: 20px;
     background: white;
@@ -9,6 +9,31 @@
     -webkit-box-shadow: 0 0 20px black;
     box-shadow: 0 0 20px black;
 }
+
+#page-wrap-clear {
+    position: relative;
+    z-index: 2;
+    width: 900px;
+    margin: 50px auto;
+    padding: 0px;
+    background: none;
+}
+
+
+#page-wrap-sides {
+    position: relative;
+    z-index: 2;
+    width: auto;
+    height: auto;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    padding: 0px;
+    background: white;
+    -moz-box-shadow: 0 0 20px black;
+    -webkit-box-shadow: 0 0 20px black;
+    box-shadow: 0 0 20px black;
+}
+
 
 #links {
 font-size:16pt
@@ -39,7 +64,7 @@ h1              { border-bottom: 2px solid #eee; }
 h2              { font-size: 1.2em; }
 
 #table-wrap {
-    width: 980px;
+    width: auto;
     overflow-x: scroll;
     overflow-y: hidden;
     white-space: nowrap;
@@ -50,8 +75,8 @@ table.dataframe, .dataframe th, .dataframe td {
   border-bottom: 1px solid #C8C8C8;
   border-collapse: collapse;
   text-align:left;
-  padding: 10px;
-  margin-bottom: 40px;
+  padding: 4px;
+  margin-bottom: 0px;
   font-size: 0.9em;
 }
 
