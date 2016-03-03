@@ -3,7 +3,6 @@
     <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.9.2.min.css" type="text/css" />
      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.9.2.min.js"></script>
-    {{ script | safe }}
   </head>
   <body>
     <div id="bg">
@@ -12,6 +11,7 @@
 
     <div id="page-wrap">
     <div class=page>
+          {{ script | safe }}
             <h1>Bokeh-powered Stock Ticker display</h1>
       <form name="ticker_button" method='GET'>
         Ticker Symbol:
