@@ -1,4 +1,4 @@
-bokeh>=0.10.0
+bokeh==0.10.0
 cycler==0.9.0
 dill==0.2.1
 Flask==0.10.1
@@ -7,10 +7,10 @@ gunicorn==19.3.0
 itsdangerous==0.24
 Jinja2==2.7.2
 MarkupSafe==0.23
-numpy>=1.10.1
+numpy==1.10.1
 oauth==1.0.1
 oauthlib==0.7.2
-pandas>=0.17.0
+pandas==0.17.0
 pygal==2.0.10
 pygal-maps-world==1.0.2
 pyparsing==2.0.5
@@ -21,6 +21,6 @@ pyzmq==14.7.0
 requests==2.8.1
 simplejson==3.8.0
 six==1.10.0
-tornado>=4.2.1
+tornado==4.2.1
 Werkzeug==0.10.4
 WTForms==2.0.2
