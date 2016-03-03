@@ -11,7 +11,6 @@ numpy==1.10.1
 oauth==1.0.1
 oauthlib==0.7.2
 pandas==0.17.0
-plotly==1.8.11
 pygal==2.0.10
 pygal-maps-world==1.0.2
 pyparsing==2.0.5

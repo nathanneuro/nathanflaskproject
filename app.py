@@ -3,14 +3,10 @@ import requests
 from bokeh.embed import components
 import bokeh.plotting as plt
 #from bokeh.plotting import figure
-#from bokeh.palettes import brewer
-#from bokeh.charts import Bar, output_file
-#from bokeh.resources import INLINE
-#from bokeh.util.string import encode_utf8
+
 import pygal
 import os
 import pandas as pd
-import numpy as np
 # from collections import OrderedDict
 from flask_wtf import Form
 from wtforms import FloatField, validators, FieldList, FormField #, StringField
