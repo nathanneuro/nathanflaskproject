@@ -5,33 +5,9 @@
 </div>
 <div id="page-wrap">
     <h1> Global Heatmap for Tech Hire Sources </h1>
+    <div height:200px>
+      <img src="/static/images/graph3.png" style='max-width:90%'>
+    </div>
     <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
-    <div>
-        <figure>
-            <embed type="image/svg+xml" src="/graph1plot/" />
-        </figure>    
-        <p>
-    <form name="NineForm" method=POST>
-    <table>
-    {% for field in form %}
-        <td>{{ field.label }}</td>
-        <td>{{ field(size=12) }}</td>
-        {% if field.errors %}
-      <td><ul class=errors>
-            {% for error in field.errors %}
-            <li><font color="red">{{ error }}</font></li>
-            {% endfor %}</ul></td>
-        {% endif %}
-        </tr>
-    {% endfor %}
-    </table>
-    <button type="submit">Update</button>
-        </p>
-    </div>
-    <div>
-        <div id="table-wrap">
-          {{ tables | safe }}
-        </div> <!-- /table-wrap -->
-    </div>
 </div> <!-- /page-wrap -->
 {% endblock %}

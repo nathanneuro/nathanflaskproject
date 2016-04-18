@@ -4,38 +4,9 @@
     <img src="http://b-i.forbesimg.com/kenrapoza/files/2013/04/Shanghai-sunrise.jpg" alt="">
 </div>
 <div id="page-wrap">
-<h1> Top Five Cities for Tech Hire Sourcing </h1>
-<p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
-<div>
-    <p>
-        <figure>
-            <embed type="image/svg+xml" src="/graph2plot/" />
-        </figure>      
-    </p>
-    <p>
-    <form name="weights" method=POST>
-    <table>
-      <th>Customize Factor Weights:</th>
-    {% for field in form %}
-        <td>{{ field.label }}</td>
-        <td>{{ field(size=12) }}</td>
-        {% if field.errors %}
-          <td><ul class=errors>
-          {% for error in field.errors %}
-            <li><font color="red">{{ error }}</font></li>
-          {% endfor %}</ul></td>
-        {% endif %}
-        </tr>
-    {% endfor %}
-    </table>
-    <button type="submit">Update</button>
-    <!--img src="static/images/topcities.png"-->
-    </p>
-</div>
-<div id="table-wrap">
-    <p>
-        {{ tables | safe }}
-    </p>
-</div>
+  <div height:200px>
+  <img src="/static/images/graph4.png" style='max-width:90%'>
+  </div>
+  <p><a href="{{ url_for('proposal') }}">Return to Proposal</a></p>
 </div>
 {% endblock %}
